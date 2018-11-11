@@ -1,4 +1,4 @@
-# Star cleaner
+# Cassiopeia
 
 Merge multiple RAW images with motion correction. 
 
