@@ -8,5 +8,5 @@ By taking multiple pictures with a short exposition time, and realigning (non-li
 
 Working directly from the RAW file allows us to access the whole data, before post-processing, jpeg compression, gamma correction, which will all reduce the amount of informations available in the dark regions of the sky.
 
-- Raw file Handling: LibRaw
-- Images alignment: OpenCV
+- Raw file Handling: LibRaw (`apt install libraw-dev` tested with `0.18.8-1ubuntu0.1`)
+- Images alignment: OpenCV (`apt install libopencv-dev`)
