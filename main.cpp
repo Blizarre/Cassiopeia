@@ -6,6 +6,8 @@
 
 #include <libraw/libraw.h>
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/features2d.hpp>
 
 #define CHECK_CALL(ret, message) do { \
     if(ret != 0) { \
@@ -72,6 +74,15 @@ ushort clamp(ushort accumulator, ushort extra) {
         return (ushort)result;
 }
 
+cv::Mat extractMat(const LibRaw& processor) {
+    return cv::Mat(
+            cv::Size{
+                processor.imgdata.sizes.iwidth, 
+                processor.imgdata.sizes.iheight}, 
+            CV_16UC3, 
+            4 * sizeof(ushort));
+}
+
 int main(int argc, char const *argv[])
 {
     if(argc < 3) {
@@ -83,15 +94,15 @@ int main(int argc, char const *argv[])
     try {
         LibRaw accumulator;
         extractImage(argv[1], &accumulator);
-
+        cv::Mat reference = extractMat(accumulator);
         std::string output = argv[argc - 1];
         std::vector<std::string> input_files_paths;
         for(int i = 2; i < argc - 1; i++) {
             LibRaw processor{};
             extractImage(argv[i], &processor);
             assert_image_size_eq(argv[i], accumulator.imgdata.sizes, processor.imgdata.sizes);
-            for(int color = 0; color < 4; color++) {
-                for(int i=0; i<accumulator.imgdata.sizes.iheight * accumulator.imgdata.sizes.iwidth; i++) {
+            for(int i=0; i<accumulator.imgdata.sizes.iheight * accumulator.imgdata.sizes.iwidth; i++) {
+                for(int color = 0; color < 4; color++) {
                     accumulator.imgdata.image[i][color] = clamp(accumulator.imgdata.image[i][color], processor.imgdata.image[i][color]);
                 }
             }
